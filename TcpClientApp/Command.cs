@@ -1,3 +1,3 @@
-namespace TcpClient;
+namespace TcpClientApp;
 
 public record Command(Request Request, Car? Param = null, int? Id = null);

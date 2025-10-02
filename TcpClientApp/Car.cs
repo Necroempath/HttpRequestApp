@@ -1,4 +1,4 @@
-namespace TcpClient;
+namespace TcpClientApp;
 
 public class Car
 {
