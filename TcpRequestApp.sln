@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpClientApp", "TcpClientApp\TcpClientApp.csproj", "{23431C96-4DE7-4613-A112-791C3F3BB1AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClientApp", "HttpClientApp\HttpClientApp.csproj", "{23431C96-4DE7-4613-A112-791C3F3BB1AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpServer", "TcpServer\TcpServer.csproj", "{95E0D369-181C-46B1-9579-B7B251E455B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpServer", "HttpServer\HttpServer.csproj", "{95E0D369-181C-46B1-9579-B7B251E455B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

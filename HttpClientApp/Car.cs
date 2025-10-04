@@ -1,4 +1,4 @@
-namespace TcpServer;
+namespace TcpClientApp;
 
 public class Car
 {
@@ -9,6 +9,6 @@ public class Car
 
     public override string ToString()
     {
-        return $"{Brand} — {Model} — {Year}";
+        return $"Id[{Id}]: {Brand} — {Model} — {Year}";
     }
 }
