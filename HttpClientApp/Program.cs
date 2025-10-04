@@ -88,7 +88,7 @@ Select option: ");
 
             using var response = await client!.DeleteAsync($"{uriBase}/Cars/{id.Value}");
             var res = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Status: {response.StatusCode}\n{response.Content.ReadAsStringAsync().Result}");
+            Console.WriteLine($"Status: {response.StatusCode}\n{await response.Content.ReadAsStringAsync()}");
             
             break;
         }
