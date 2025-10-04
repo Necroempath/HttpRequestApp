@@ -25,7 +25,7 @@ Select option: ");
         {
             using var response = await client.GetAsync(uriBase + "Cars");
 
-            var cars = JsonSerializer.Deserialize<List<Car>>(response.Content.ReadAsStringAsync().Result);
+            var cars = JsonSerializer.Deserialize<List<Car>>(await response.Content.ReadAsStringAsync());
 
             cars!.ForEach(Console.WriteLine);
 
@@ -45,7 +45,7 @@ Select option: ");
             using HttpContent content = new StringContent(JsonSerializer.Serialize(car));
             using var response = await client.PostAsync(uriBase + "Cars", content);
 
-            Console.WriteLine($"Status: {response.StatusCode}\n{response.Content.ReadAsStringAsync().Result}");
+            Console.WriteLine($"Status: {response.StatusCode}\n{await response.Content.ReadAsStringAsync()}");
             break;
         }
 
@@ -71,7 +71,7 @@ Select option: ");
             using HttpContent content = new StringContent(JsonSerializer.Serialize(car));
             using var response = await client!.PutAsync(uriBase + "Cars", content);
 
-            Console.WriteLine($"Status: {response.StatusCode}\n{response.Content.ReadAsStringAsync().Result}");
+            Console.WriteLine($"Status: {response.StatusCode}\n{await response.Content.ReadAsStringAsync()}");
             
             break;
         }

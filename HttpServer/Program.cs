@@ -26,12 +26,10 @@ while (true)
         case "GET":
         {
             var cars = dbContext.Cars.ToList();
-            var result = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(cars));
-
-            response.ContentLength64 = result.Length;
-
-            await response.OutputStream.WriteAsync(result, 0, result.Length);
-
+            var body = JsonSerializer.Serialize(cars);
+            
+            await RespondAsync(response, body);
+    
             break;
         }
 
@@ -43,22 +41,18 @@ while (true)
             
             try
             {
-                car = await ReadBodyAsync<Car>();
+                car = await ReadBodyAsync<Car>(request);
             }
             catch (Exception ex)
             {
-                response.StatusCode = 500;
-                await writer.WriteAsync($"Internal server error: {ex.Message}");
+                await RespondAsync(response, $"Internal server error: {ex.Message}", 500);
                 break;
             }
-            
-            response.StatusCode = 201;
             
             dbContext.Cars.Add(car);
             await dbContext.SaveChangesAsync();
             
-            
-            await writer.WriteAsync($"Car {car} has been added");
+            await RespondAsync(response, $"Car {car} has been added", 201);
             
             break;   
         }
@@ -71,12 +65,11 @@ while (true)
             
             try
             {
-                car = await ReadBodyAsync<Car>();
+                car = await ReadBodyAsync<Car>(request);
             }
             catch (Exception ex)
             {
-                response.StatusCode = 500;
-                await writer.WriteAsync($"Internal server error: {ex.Message}");
+                await RespondAsync(response, $"Internal server error: {ex.Message}", 500);
                 break;
             }
             
@@ -84,8 +77,7 @@ while (true)
             
             if (carToUpdate is null)
             {
-                await writer.WriteAsync($"Car {car} not found");
-                response.StatusCode = 404;
+                await RespondAsync(response, $"Car {car} not found", 404);
                 break;
             }
             
@@ -94,7 +86,7 @@ while (true)
             carToUpdate.Year = car.Year;
             
             await dbContext.SaveChangesAsync();
-            await writer.WriteAsync($"Car {car} has been edited");
+            await RespondAsync(response, $"Car {car} has been edited");
             
             break;
         }
@@ -105,8 +97,7 @@ while (true)
 
             if (!int.TryParse(request.Url!.Segments[3], out int id))
             {
-                await writer.WriteAsync("Invalid id");
-                response.StatusCode = 400;
+                await RespondAsync(response, "Invalid id", 400);
                 break;
             }
 
@@ -114,25 +105,34 @@ while (true)
 
             if (carToRemove is null)
             {
-                await writer.WriteAsync($"Car {carToRemove} not found");
+                await RespondAsync(response, $"Car {carToRemove} not found", 404);
                 break;
             }
             
             dbContext.Cars.Remove(carToRemove);
             await dbContext.SaveChangesAsync();
             
-            await writer.WriteAsync($"Car {carToRemove} has been deleted");
+            await RespondAsync(response, $"Car {carToRemove} has been deleted");
             
             break;
         }
     }
     response.Close();
-    async Task<T> ReadBodyAsync<T>()
-    {
-        using var reader = new StreamReader(request.InputStream);
-        string body = await reader.ReadToEndAsync();
+}
+async Task<T> ReadBodyAsync<T>(HttpListenerRequest request)
+{
+    using var reader = new StreamReader(request.InputStream);
+    string body = await reader.ReadToEndAsync();
         
-        return JsonSerializer.Deserialize<T>(body);
-    }
+    return JsonSerializer.Deserialize<T>(body);
+}
+
+async Task RespondAsync(HttpListenerResponse response, string body, int statusCode = 200, string contentType = "text/plain")
+{
+    response.StatusCode = statusCode;
+    response.ContentType = contentType;
+    
+    await using var writer = new StreamWriter(response.OutputStream);
+    await writer.WriteLineAsync(body);
 }
 
